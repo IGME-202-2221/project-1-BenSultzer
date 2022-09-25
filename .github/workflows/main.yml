@@ -1,27 +1,15 @@
 name: Remove old artifacts
 
-on: push
-
-concurrency:
-  group: archive_removal
-  cancel-in-progress: true
+on:
+  schedule:
+    # Every hour
+    - cron: '0,10,20,30,40,50 * * * *'
 
 jobs:
-  sleep:
-    runs-on: ubuntu-latest
-    
-    steps:
-    - name: Sleep Action
-      uses: juliangruber/sleep-action@v1.0.1
-      with:
-        time: 10m
-    
-    
   remove-old-artifacts:
-    needs: sleep
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    
+
     steps:
     - name: Remove old artifacts
       uses: c-hive/gha-remove-artifacts@v1
