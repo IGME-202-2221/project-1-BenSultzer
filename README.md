@@ -1,11 +1,11 @@
-# Project Shoot 'Em Up
+# Project PROJECT_NAME
 
 [Markdown Cheatsheet](https://github.com/adam-p/markdown-here/wiki/Markdown-Here-Cheatsheet)
 
 ### Student Info
 
--   Name: Ben Sultzer
--   Section: 06
+-   Name: YOUR NAME
+-   Section: ##
 
 ## Game Design
 
