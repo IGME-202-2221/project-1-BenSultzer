@@ -4,8 +4,8 @@
 
 ### Student Info
 
--   Name: YOUR NAME
--   Section: ##
+-   Name: Ben Sultzer
+-   Section: 06
 
 ## Game Design
 
