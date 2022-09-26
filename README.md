@@ -1,4 +1,4 @@
-# Project PROJECT_NAME
+# Project Shoot 'Em Up
 
 [Markdown Cheatsheet](https://github.com/adam-p/markdown-here/wiki/Markdown-Here-Cheatsheet)
 
@@ -9,28 +9,28 @@
 
 ## Game Design
 
--   Camera Orientation: _How are the art assets viewed from? (ie. topdown or side)_
--   Camera Movement: _How does the camera move in your game? (if at all)_
--   Player Health: _How are you handling player health? (healthbar, lives, ?)_
--   End Condition: _How does a game/round/level end?_
--   Scoring: _How does the player earn points in your game?_
+-   Camera Orientation: Topdown
+-   Camera Movement: Stationary
+-   Player Health: The player dies in one hit, however, if they collect enough pieces of enemy ships to upgrade to the next hull, their hitpoints will increase. They can get hit a certain number of times at each hull level until that hull breaks off of them and they get demoted, at which point their hitpoints are reduced again to the previous level.
+-   End Condition: The player wins by collecting enough enemy ship pieces to upgrade to the final hull level.
+-   Scoring: The player gets points by killing enemies and collecting enemy ship pieces. At each ascending hull level, the player earns more points per enemy kill.
 
 ### Game Description
 
-_A brief explanation of your game. Inculde what is the objective for the player. Think about what would go on the back of a game box._
+Inspired by Asteroids, the game takes place in open space where enemy ships randomly spawn off-screen, shooting at and chasing the player while wrapping around the screen edges along with the player until they are killed. The waves of enemies grow more difficult as the player attempts to destroy enemy ships, collect points and enemy ship parts for each kill, upgrade their own ship, and reach the final hull level!
 
 ### Controls
 
 -   Movement
-    -   Up: 
-    -   Down: 
-    -   Left: 
-    -   Right: 
--   Fire: 
+    -   Up: W/Up Arrow Key
+    -   Down: S/Down Arrow Key
+    -   Left: A/Left Arrow Key
+    -   Right: D/Right Arrow Key
+-   Fire: Left Mouse Button (No omni-drectional aiming with mouse, only serves to fire a projectile in the direction the ship is facing.)
 
-## You Additions
+## Your Additions
 
-_List out what you added to your game to make it different for you_
+-   When a player destroys an enemy's ship, occasionally three ship parts will fly off into space simulating accurate destruction physics in zero-gravity, where the player will have a limited time to collect enough of them to upgrade to the next hull level. If the player is hit enough, their own ship will break apart down to the previous hull level and they will not be able to re-collect those broken pieces. The ship movement will also simulate accurate forces in zero-gravity, such as acceleration, thrust, etc.
 
 ## Sources
 
