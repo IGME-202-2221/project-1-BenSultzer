@@ -3,7 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PlayerMovement : MonoBehaviour
+// Author: Ben Sultzer
+// Purpose: Controls the movement and firing of 
+// the player and enemy ships
+// Restrictions: None
+public class ShipController : MonoBehaviour
 {
     // Create a public-facing variable to
     // store the camera to find it's viewport
@@ -17,17 +21,27 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField]
     float speed = 1f;
 
+    // Create a public-facing variable to store the
+    // projectile for the player
+    [SerializeField]
+    GameObject projectile;
+
+    // Create a List to store all of the player's
+    // fired projectiles
+    public List<GameObject> projectiles;
+
     // Create Vector3 variables to store the
     // position, velocity, and movement direction
     // of the vehicle
-    Vector3 vehiclePosition = Vector3.zero;
-    Vector3 direction = Vector3.zero;
-    Vector3 velocity = Vector3.zero;
+    private Vector3 vehiclePosition = Vector3.zero;
+    private Vector3 direction = Vector3.zero;
+    private Vector3 velocity = Vector3.zero;
 
     // Start is called before the first frame update
     void Start()
     {
         vehiclePosition = transform.position;
+        projectiles = new List<GameObject>();
     }
 
     // Update is called once per frame
@@ -90,5 +104,21 @@ public class PlayerMovement : MonoBehaviour
         direction = context.ReadValue<Vector2>();
 
         transform.rotation = Quaternion.LookRotation(Vector3.back, direction);
+    }
+
+    public void OnFire(InputAction.CallbackContext context)
+    {
+        if (context.phase == InputActionPhase.Performed)
+        {
+            GameObject newProjectile = Instantiate(projectile);
+
+            Projectile projectileComp = newProjectile.GetComponent<Projectile>();
+
+            projectileComp.ProjectilePosition = transform.position;
+            projectileComp.Direction = direction;
+            projectileComp.Camera = camera;
+
+            projectiles.Add(newProjectile);
+        }
     }
 }
