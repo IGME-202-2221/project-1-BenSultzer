@@ -93,6 +93,4 @@ public class Projectile : MonoBehaviour
         // "Draw" this vehicle at that position
         transform.position = projectilePosition;
     }
-
-
 }
