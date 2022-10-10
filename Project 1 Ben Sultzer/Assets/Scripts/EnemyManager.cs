@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 // Author: Ben Sultzer
-// Purpose: Manages the movement and collision
-// resolution of all currently active enemies
+// Purpose: Manages the spawning, movement, and firing
+// of all currently active enemies
 // Restrictions: None
 public class EnemyManager : MonoBehaviour
 {
@@ -14,7 +14,7 @@ public class EnemyManager : MonoBehaviour
     GameObject player;
 
     // Create a public facing variable to store the
-    // enemy prefab
+    // Basic Enemy prefab
     [SerializeField]
     GameObject enemy;
 
@@ -88,7 +88,7 @@ public class EnemyManager : MonoBehaviour
     {
         // Assess what level the player is currently at and 
         // whether enough time has passed, to determine if a new
-        // wave of enemies should be spawn
+        // wave of enemies should be spawned
         if (player.GetComponent<ShipController>().HullLevel == 1 &&
             timeBeforeWaveSpawn > 60)
         {
@@ -114,6 +114,8 @@ public class EnemyManager : MonoBehaviour
                 timeBeforeDirChange = 0f;
             } else
             {
+                // Add the currently elapsed game time to the time tracker
+                // before the next direction change
                 timeBeforeDirChange += Time.deltaTime;
             }
         }
@@ -128,6 +130,8 @@ public class EnemyManager : MonoBehaviour
                 timeBeforeFireNextProjectile = 0f;
             } else
             {
+                // Add the currently elapsed game time to the time tracker
+                // before the next weapon fire
                 timeBeforeFireNextProjectile += Time.deltaTime;
             }
         }
@@ -140,7 +144,7 @@ public class EnemyManager : MonoBehaviour
     {
         for (int i = 0; i < 3; i++)
         {
-            // Instantiate the enemy prefab
+            // Instantiate the Basic Enemy prefab
             GameObject newEnemy = Instantiate(enemy);
 
             // Get the current enemy's ShipController Component

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 // Author: Ben Sultzer
-// Purpose: Executes the collision detection methods
-// and gives information used by the CollisionManager script 
-// converying whether or not a collision occurred
+// Purpose: Executes the Bounding circle collision detection
+// method and gives information used by the CollisionManager
+// script conveying whether or not a collision occurred
 // Restrictions: None
 public class CollisionDetection : MonoBehaviour
 {

@@ -4,14 +4,15 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 // Author: Ben Sultzer
-// Purpose: Controls which collision detection method 
-// to use and manages how the player switches between the
-// two
+// Purpose: Controls resolution for collisions between
+// the player and an enemy ship, a player's projectile
+// and an enemy ship, and an enemy's projectile and the
+// player
 // Restrictions: None
 public class CollisionManager : MonoBehaviour
 {
-    // Create a public facing variable to store the
-    // player car
+    // Create a public-facing variable to store the
+    // player
     [SerializeField]
     GameObject player;
 
@@ -29,7 +30,6 @@ public class CollisionManager : MonoBehaviour
 
     // Create a List to store the collidable projectiles
     // of each enemy
-    [SerializeField]
     private List<List<GameObject>> collidableProjectilesEnemies;
 
     // Create a CollisionDetection variable to gain access to the
@@ -46,6 +46,8 @@ public class CollisionManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // Initialize the lists of collidable enemies and collidable projectiles
+        // for the player and enemies
         collidableEnemies = enemyManager.GetComponent<EnemyManager>().Enemies;
         collidableProjectilesPlayer = player.GetComponent<ShipController>().Projectiles;
         for (int i = 0; i < collidableEnemies.Count; i++)
@@ -54,29 +56,69 @@ public class CollisionManager : MonoBehaviour
                 GetComponent<ShipController>().Projectiles);
         }
 
+        // Test for collisions between the player and any of the enemy
+        // ships
         for (int i = 0; i < collidableEnemies.Count; i++)
         {
             if (collisionDetection.CircleCollision(player, collidableEnemies[i]))
             {
                 player.GetComponent<ShipController>().VehiclePosition = new Vector3(0, 0);
-                break;
             }
         }
 
+        // Test for collisions between any of the player's projectiles and
+        // any of the enemy ships
         for (int i = 0; i < collidableProjectilesPlayer.Count; i++)
         {
             for (int j = 0; j < collidableEnemies.Count; j++)
             {
-                if (collisionDetection.CircleCollision(collidableProjectilesPlayer[i], 
+                if (collisionDetection.CircleCollision(collidableProjectilesPlayer[i],
                     collidableEnemies[j]))
                 {
-                    GameObject projectileToDestroy = collidableProjectilesPlayer[i];
-                    collidableProjectilesPlayer.RemoveAt(i);
-                    Destroy(projectileToDestroy);
+                    // Get the projectile that hit an enemy ship, the enemy ship that was
+                    // hit, and create a variable to store each of the projectiles fired
+                    // by the hit enemy
+                    GameObject playerProjectileToDestroy = collidableProjectilesPlayer[i];
                     GameObject enemyToDestroy = collidableEnemies[j];
+                    GameObject enemyProjectileToDestroy;
+
+                    // Destroy all leftover projectiles fired by the hit enemy, remove
+                    // them from that enemy's List of projectiles, and remove that enemy's
+                    // projectile List from the overall List of enemy projectiles
+                    for (int k = 0; k < collidableProjectilesEnemies[j].Count; k++)
+                    {
+                        enemyProjectileToDestroy = collidableProjectilesEnemies[j][k];
+                        collidableProjectilesEnemies[j].RemoveAt(k);
+                        collidableProjectilesEnemies.RemoveAt(j);
+                        Destroy(enemyProjectileToDestroy);
+                    }
+
+                    // Remove from their respective Lists and destroy, the player projectile
+                    // that hit an enemy and the enemy that was hit
+                    collidableProjectilesPlayer.RemoveAt(i);
+                    Destroy(playerProjectileToDestroy);
                     collidableEnemies.RemoveAt(j);
                     Destroy(enemyToDestroy);
-                    break;
+                }
+            }
+        }
+
+        // Test for collisions between any of the enemy's projectiles and the player
+        for (int i = 0; i < collidableProjectilesEnemies.Count; i++)
+        {
+            for (int j = 0; j < collidableProjectilesEnemies[i].Count; j++)
+            {
+                if (collisionDetection.CircleCollision(collidableProjectilesEnemies[i][j],
+                    player))
+                {
+                    // Reset the player's position to the center of the screen if they were hit
+                    player.GetComponent<ShipController>().VehiclePosition = new Vector3(0, 0);
+
+                    // Remove the projectile that hit the player from the projectile List of the
+                    // corresponding enemy and destroy that projectile
+                    GameObject enemyProjectileToDestroy = collidableProjectilesEnemies[i][j];
+                    collidableProjectilesEnemies[i].RemoveAt(j);
+                    Destroy(enemyProjectileToDestroy);
                 }
             }
         }
