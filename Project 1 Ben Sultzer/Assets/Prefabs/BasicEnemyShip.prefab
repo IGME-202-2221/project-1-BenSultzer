@@ -10,6 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 8711981773542071283}
   - component: {fileID: 2454943601932058687}
+  - component: {fileID: 790523246876203647}
+  - component: {fileID: -4594461159383046604}
   m_Layer: 0
   m_Name: BasicEnemyShip
   m_TagString: Untagged
@@ -84,3 +86,30 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &790523246876203647
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6356248695808816817}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96ad7a6a4af2a284bbb0601d5308981b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  camera: {fileID: 0}
+  speed: 3
+  projectile: {fileID: 8327118601700776068, guid: 23367400401f6da45a5a335bba74e634, type: 3}
+--- !u!114 &-4594461159383046604
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6356248695808816817}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4da80b59c2040a94a89988869e7bbfdb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

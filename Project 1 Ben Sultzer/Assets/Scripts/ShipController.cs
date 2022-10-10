@@ -28,7 +28,7 @@ public class ShipController : MonoBehaviour
 
     // Create a List to store all of the player's
     // fired projectiles
-    List<GameObject> projectiles;
+    private List<GameObject> projectiles;
 
     // Create Vector3 variables to store the
     // position, velocity, and movement direction
@@ -100,25 +100,34 @@ public class ShipController : MonoBehaviour
     }
 
     /// <summary>
-    /// Property for getting half the height of the 
-    /// viewport
+    /// Property for getting and setting the
+    /// camera (used to pass the Main Camera 
+    /// from the EnemyManager to each newly-
+    /// created enemy, so that each newly-
+    /// created enemy can then in turn pass 
+    /// the camera to their fired projectiles)
     /// </summary>
-    public float HalfCamHeight
+    public GameObject Camera
     {
         get
         {
-            return halfCamHeight;
+            return camera;
+        }
+
+        set
+        {
+            camera = value;
         }
     }
 
     /// <summary>
-    /// Property for getting half the width of the 
-    /// viewport
-    public float HalfCamWidth
+    /// Property for getting a ship's list of projectiles
+    /// </summary>
+    public List<GameObject> Projectiles
     {
         get
         {
-            return halfCamWidth;
+            return projectiles;
         }
     }
 
@@ -234,5 +243,29 @@ public class ShipController : MonoBehaviour
             // active projectiles
             projectiles.Add(newProjectile);
         }
+    }
+
+    /// <summary>
+    /// Create a separate firing method for enemies that does not
+    /// rely on player input
+    /// </summary>
+    public void EnemyFire()
+    {
+        // Instantiate the Projectile prefab
+        GameObject newProjectile = Instantiate(projectile);
+
+        // Get the currently fired projectile's Projectile 
+        // Component
+        Projectile projectileComp = newProjectile.GetComponent<Projectile>();
+
+        // Set the currently fired projectile's necessary movement
+        // data
+        projectileComp.ProjectilePosition = transform.position;
+        projectileComp.Direction = transform.up;
+        projectileComp.Camera = camera;
+
+        // Add the currently fired projectile to the List of
+        // active projectiles
+        projectiles.Add(newProjectile);
     }
 }

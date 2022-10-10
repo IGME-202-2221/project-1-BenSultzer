@@ -18,6 +18,12 @@ public class EnemyManager : MonoBehaviour
     [SerializeField]
     GameObject enemy;
 
+    // Create a public facing variable to store the
+    // camera to allow each new enemy to pass that 
+    // camera to their respective projectiles
+    [SerializeField]
+    GameObject camera;
+
     // Create a List to store all currently active
     // enemies
     private List<GameObject> enemies;
@@ -31,9 +37,35 @@ public class EnemyManager : MonoBehaviour
     // current hull level
     private float timeBeforeWaveSpawn;
 
+    // Create a variable to track the time between
+    // an enemy firing a projectile
+    private float timeBeforeFireNextProjectile;
+
     // Create a variable to store the set of available 
     // movement directions
-    Vector2[] movementDir;
+    private Vector2[] movementDir;
+
+    // Create a variable to store half the height of the camera's
+    // viewport to determine the random y-position spawnpoint of 
+    // an enemy
+    private float halfCamHeight;
+
+    // Create a variable to store half the width of the camera's
+    // viewport to determine the random x-position spawnpoint of 
+    // an enemy  
+    private float halfCamWidth;
+
+    /// <summary>
+    /// Property for getting the List of all active
+    /// enemies
+    /// </summary>
+    public List<GameObject> Enemies
+    {
+        get
+        {
+            return enemies;
+        }
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -41,7 +73,14 @@ public class EnemyManager : MonoBehaviour
         enemies = new List<GameObject>();
         timeBeforeDirChange = 0f;
         timeBeforeWaveSpawn = 0f;
-        movementDir = new Vector2[] { Vector2.up, Vector2.right, Vector2.down, Vector2.left };
+        movementDir = new Vector2[] { Vector2.up, Vector2.right, Vector2.down, Vector2.left,
+                                      new Vector2(-1, 1), new Vector2(1, 1), new Vector2(1, -1), 
+                                      new Vector2(-1, -1)};
+        halfCamHeight = camera.GetComponent<Camera>().orthographicSize;
+        halfCamWidth = halfCamHeight * camera.GetComponent<Camera>().aspect;
+
+        // Spawn intitial wave
+        SpawnLevel1Enemies();
     }
 
     // Update is called once per frame
@@ -51,14 +90,46 @@ public class EnemyManager : MonoBehaviour
         // whether enough time has passed, to determine if a new
         // wave of enemies should be spawn
         if (player.GetComponent<ShipController>().HullLevel == 1 &&
-            timeBeforeWaveSpawn > 5)
+            timeBeforeWaveSpawn > 60)
         {
             SpawnLevel1Enemies();
+            timeBeforeWaveSpawn = 0f;
         } else
         {
             // Add the currently elapsed game time to the time tracker
             // before the next wave spawn
             timeBeforeWaveSpawn += Time.deltaTime;
+        }
+
+        // Assess whether enough time has passed to change the
+        // movement direction of each enemy
+        for (int i = 0; i < enemies.Count; i++)
+        {
+            if (timeBeforeDirChange > 2)
+            {
+                enemies[i].GetComponent<ShipController>().Direction =
+                    movementDir[Random.Range(0, 8)];
+                enemies[i].transform.rotation = Quaternion.LookRotation(
+                    Vector3.back, enemies[i].GetComponent<ShipController>().Direction);
+                timeBeforeDirChange = 0f;
+            } else
+            {
+                timeBeforeDirChange += Time.deltaTime;
+            }
+        }
+
+        // Allow each enemy to fire after a random amount of time has
+        // passed within a range of 1 to 5 seconds
+        for (int i = 0; i < enemies.Count; i++)
+        {
+            if (timeBeforeFireNextProjectile > Random.Range(1f, 5f))
+            {
+                enemies[i].GetComponent<ShipController>().EnemyFire();
+                timeBeforeFireNextProjectile = 0f;
+            } else
+            {
+                timeBeforeFireNextProjectile += Time.deltaTime;
+            }
         }
     }
 
@@ -67,19 +138,25 @@ public class EnemyManager : MonoBehaviour
     /// </summary>
     private void SpawnLevel1Enemies()
     {
-        // Instantiate the enemy prefab
-        GameObject newEnemy = Instantiate(enemy);
+        for (int i = 0; i < 3; i++)
+        {
+            // Instantiate the enemy prefab
+            GameObject newEnemy = Instantiate(enemy);
 
-        // Get the current enemy's ShipController Component
-        ShipController shipControlComp = newEnemy.GetComponent<ShipController>();
+            // Get the current enemy's ShipController Component
+            ShipController shipControlComp = newEnemy.GetComponent<ShipController>();
 
-        // Set the current enemy's necessary movement data
-        shipControlComp.VehiclePosition = new Vector3(
-            Random.Range(-shipControlComp.HalfCamWidth, shipControlComp.HalfCamWidth), 
-            Random.Range(-shipControlComp.HalfCamHeight, shipControlComp.HalfCamHeight));
-        shipControlComp.Direction = movementDir[Random.Range(0, 4)];
+            // Set the current enemy's necessary movement data
+            shipControlComp.VehiclePosition = new Vector3(
+                Random.Range(-halfCamWidth, halfCamWidth),
+                Random.Range(-halfCamHeight, halfCamHeight));
+            shipControlComp.Direction = movementDir[Random.Range(0, 8)];
+            newEnemy.transform.rotation = Quaternion.LookRotation(
+                Vector3.back, shipControlComp.Direction);
+            shipControlComp.Camera = camera;
 
-        // Add the current enemy to the List of active enemies
-        enemies.Add(newEnemy);
+            // Add the current enemy to the List of active enemies
+            enemies.Add(newEnemy);
+        }
     }
 }
