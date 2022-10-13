@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 
 // Author: Ben Sultzer
@@ -30,6 +31,7 @@ public class CollisionManager : MonoBehaviour
 
     // Create a List to store the collidable projectiles
     // of each enemy
+    [SerializeField]
     private List<List<GameObject>> collidableProjectilesEnemies;
 
     // Create a CollisionDetection variable to gain access to the
@@ -63,6 +65,7 @@ public class CollisionManager : MonoBehaviour
             if (collisionDetection.CircleCollision(player, collidableEnemies[i]))
             {
                 player.GetComponent<ShipController>().VehiclePosition = new Vector3(0, 0);
+                break;
             }
         }
 
@@ -75,6 +78,9 @@ public class CollisionManager : MonoBehaviour
                 if (collisionDetection.CircleCollision(collidableProjectilesPlayer[i],
                     collidableEnemies[j]))
                 {
+                    // Increment the player's score when the hit an enemy
+                    player.GetComponent<Player>().Score += 100;
+
                     // Get the projectile that hit an enemy ship, the enemy ship that was
                     // hit, and create a variable to store each of the projectiles fired
                     // by the hit enemy
@@ -83,15 +89,16 @@ public class CollisionManager : MonoBehaviour
                     GameObject enemyProjectileToDestroy;
 
                     // Destroy all leftover projectiles fired by the hit enemy, remove
-                    // them from that enemy's List of projectiles, and remove that enemy's
-                    // projectile List from the overall List of enemy projectiles
-                    for (int k = 0; k < collidableProjectilesEnemies[j].Count; k++)
+                    // them from that enemy's List of projectiles
+                    for (int k = collidableProjectilesEnemies[j].Count - 1; k >= 0; k--)
                     {
                         enemyProjectileToDestroy = collidableProjectilesEnemies[j][k];
                         collidableProjectilesEnemies[j].RemoveAt(k);
-                        collidableProjectilesEnemies.RemoveAt(j);
                         Destroy(enemyProjectileToDestroy);
                     }
+                    // Remove the current enemy's projectile List from the overall List of enemy
+                    // projectiles
+                    collidableProjectilesEnemies.RemoveAt(j);
 
                     // Remove from their respective Lists and destroy, the player projectile
                     // that hit an enemy and the enemy that was hit
@@ -99,6 +106,7 @@ public class CollisionManager : MonoBehaviour
                     Destroy(playerProjectileToDestroy);
                     collidableEnemies.RemoveAt(j);
                     Destroy(enemyToDestroy);
+                    break;
                 }
             }
         }
@@ -119,6 +127,10 @@ public class CollisionManager : MonoBehaviour
                     GameObject enemyProjectileToDestroy = collidableProjectilesEnemies[i][j];
                     collidableProjectilesEnemies[i].RemoveAt(j);
                     Destroy(enemyProjectileToDestroy);
+
+                    // Restart the game
+                    //SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+                    break;
                 }
             }
         }

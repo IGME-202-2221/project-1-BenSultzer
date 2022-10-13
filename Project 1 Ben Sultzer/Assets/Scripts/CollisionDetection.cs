@@ -50,8 +50,7 @@ public class CollisionDetection : MonoBehaviour
         // of each GameObject is less than the total combined
         // square radii of their bounding circles
         // Calculate sqaure distance
-        float squareDistance = Mathf.Pow(gameObj2Info.Center.x - gameObj1Info.Center.x, 2) +
-            Mathf.Pow(gameObj2Info.Center.y - gameObj1Info.Center.y, 2);
+        float squareDistance = Vector3.SqrMagnitude(gameObj1.transform.position - gameObj2.transform.position);
 
         // Calculate square combined radius
         float squaredCombinedRad = Mathf.Pow(gameObj1Rad + gameObj2Rad, 2);

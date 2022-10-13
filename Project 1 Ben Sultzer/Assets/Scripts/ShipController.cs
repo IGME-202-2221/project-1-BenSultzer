@@ -18,8 +18,9 @@ public class ShipController : MonoBehaviour
 
     // Create a public-facing variable
     // to store the speed of the vehicle
-    [SerializeField]
-    float speed = 1f;
+    float acceleration = 2.5f;
+
+    private float terminalVelocity = 5f;
 
     // Create a public-facing variable to store the
     // projectile for the player
@@ -36,10 +37,6 @@ public class ShipController : MonoBehaviour
     private Vector3 vehiclePosition = Vector3.zero;
     private Vector3 direction = Vector3.zero;
     private Vector3 velocity = Vector3.zero;
-
-    // Create a variable to store the current hull level of
-    // the given ship
-    private int hullLevel;
 
     // Create a variable to store half the height of the camera's
     // viewport to correctly measure if the vehicle's position
@@ -88,18 +85,6 @@ public class ShipController : MonoBehaviour
     }
 
     /// <summary>
-    /// Property for getting the current hull level
-    /// of the given ship
-    /// </summary>
-    public int HullLevel
-    {
-        get
-        {
-            return hullLevel;
-        }
-    }
-
-    /// <summary>
     /// Property for getting and setting the
     /// camera (used to pass the Main Camera 
     /// from the EnemyManager to each newly-
@@ -136,7 +121,6 @@ public class ShipController : MonoBehaviour
     {
         vehiclePosition = transform.position;
         projectiles = new List<GameObject>();
-        hullLevel = 1;
         halfCamHeight = camera.GetComponent<Camera>().orthographicSize;
         halfCamWidth = halfCamHeight * camera.GetComponent<Camera>().aspect;
     }
@@ -145,10 +129,15 @@ public class ShipController : MonoBehaviour
     void Update()
     {
         // Velocity is direction * speed * deltaTime
-        velocity = direction * speed * Time.deltaTime;
+        velocity += direction * acceleration * Time.deltaTime;
+
+        if (velocity.magnitude > terminalVelocity)
+        {
+            velocity = velocity.normalized * terminalVelocity;
+        }
 
         // Add velocity to position
-        vehiclePosition += velocity;
+        vehiclePosition += velocity * Time.deltaTime;
 
         // Check to see if the player has reached the edges
         // of the screen (in both the x- and y-directions)
@@ -260,6 +249,7 @@ public class ShipController : MonoBehaviour
 
         // Set the currently fired projectile's necessary movement
         // data
+        newProjectile.transform.position = transform.position;
         projectileComp.ProjectilePosition = transform.position;
         projectileComp.Direction = transform.up;
         projectileComp.Camera = camera;

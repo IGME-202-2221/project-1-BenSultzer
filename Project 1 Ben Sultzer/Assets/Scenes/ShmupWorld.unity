@@ -284,8 +284,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b72e166b14a45a40be60677d7b4516e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyManager: {fileID: 1436626422}
   player: {fileID: 1546115834590372336}
+  enemyManager: {fileID: 1436626422}
 --- !u!114 &1635652133
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -396,7 +396,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   camera: {fileID: 953048989}
-  speed: 3
+  speed: 0
   projectile: {fileID: 7388366856095501585, guid: 1b55f58badb22d74ab96ce40a78002cb, type: 3}
 --- !u!114 &1546115834590372338
 MonoBehaviour:
@@ -474,5 +474,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4da80b59c2040a94a89988869e7bbfdb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1546115834590372344
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1546115834590372336}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c3cd6be391a5b5c499aabc80f14ef4d2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 

@@ -89,7 +89,7 @@ public class EnemyManager : MonoBehaviour
         // Assess what level the player is currently at and 
         // whether enough time has passed, to determine if a new
         // wave of enemies should be spawned
-        if (player.GetComponent<ShipController>().HullLevel == 1 &&
+        if (player.GetComponent<Player>().HullLevel == 1 &&
             timeBeforeWaveSpawn > 60)
         {
             SpawnLevel1Enemies();
