@@ -16,16 +16,18 @@ public class ShipController : MonoBehaviour
     [SerializeField]
     GameObject camera;
 
-    // Create a public-facing variable
-    // to store the speed of the vehicle
-    float acceleration = 2.5f;
-
-    private float terminalVelocity = 5f;
-
     // Create a public-facing variable to store the
     // projectile for the player
     [SerializeField]
     GameObject projectile;
+
+    // Create a variable to store the acceleration
+    // of the vehicle
+    float acceleration = 10f;
+
+    // Create a variable to store the 
+    // maximum speed of the vehicle
+    private float maxSpeed = 5f;
 
     // Create a List to store all of the player's
     // fired projectiles
@@ -128,12 +130,14 @@ public class ShipController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // Velocity is direction * speed * deltaTime
+        // Velocity with acceleration is direction * acceleration
+        // * deltaTime added to the current velocity.
         velocity += direction * acceleration * Time.deltaTime;
 
-        if (velocity.magnitude > terminalVelocity)
+        // Prevent the vehicle from accelerating past the max speed
+        if (velocity.magnitude > maxSpeed)
         {
-            velocity = velocity.normalized * terminalVelocity;
+            velocity = velocity.normalized * maxSpeed;
         }
 
         // Add velocity to position

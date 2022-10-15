@@ -12,6 +12,10 @@ public class Player : MonoBehaviour
     // the given ship
     private int hullLevel;
 
+    // Create a variable to store how many times the player has been
+    // hit
+    private int numHits;
+
     /// <summary>
     /// Property for getting the current hull level
     /// of the given ship
@@ -38,6 +42,23 @@ public class Player : MonoBehaviour
         set
         {
             score = value;
+        }
+    }
+
+    /// <summary>
+    /// Property for getting and setting the number
+    /// of times the player has been hit
+    /// </summary>
+    public int NumHits
+    {
+        get
+        {
+            return numHits;
+        }
+
+        set
+        {
+            numHits = value;
         }
     }
 
