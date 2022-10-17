@@ -21,10 +21,23 @@ public class CollisionManager : MonoBehaviour
     [SerializeField]
     GameObject enemyManager;
 
+    // Create a public-facing variable to store the
+    // ship part collectables prefab
+    [SerializeField]
+    GameObject shipParts;
+
     // Create a variable to track the time and 
     // flash the player's sprite invisible when they
     // are hit
     private float flashTracker;
+
+    // Create a variable to store whether the player
+    // is dead or not
+    private bool playerDead;
+
+    // Create a variable to store the chance of a
+    // ship part spawning
+    private float shipPartChance;
 
     // Create a List to store the collidable enemies
     private List<GameObject> collidableEnemies;
@@ -41,17 +54,44 @@ public class CollisionManager : MonoBehaviour
     // Bounding Circle collision calculation method.
     private CollisionDetection collisionDetection;
 
+    /// <summary>
+    /// Property for getting and setting whether the player is
+    /// dead or not
+    /// </summary>
+    public bool PlayerDead
+    {
+        get
+        {
+            return playerDead;
+        }
+
+        set
+        {
+            playerDead = value;
+        }
+    }
+
     // Start is called before the first frame update
     void Start()
     {
         collisionDetection = new CollisionDetection();
         collidableProjectilesEnemies = new List<List<GameObject>>();
         flashTracker = 0.0f;
+        playerDead = false;
+        shipPartChance = 0.5f;
     }
 
     // Update is called once per frame
     void Update()
     {
+        // Create a variable to store the probability result
+        // of spawning a ship part
+        float shipPartResult;
+
+        // Create a variable to store the potentially
+        // new ship part
+        GameObject newShipPart;
+
         // Initialize the lists of collidable enemies and collidable projectiles
         // for the player and enemies
         collidableEnemies = enemyManager.GetComponent<EnemyManager>().Enemies;
@@ -71,6 +111,34 @@ public class CollisionManager : MonoBehaviour
                 if (collisionDetection.CircleCollision(collidableProjectilesPlayer[i],
                     collidableEnemies[j]))
                 {
+                    // Generate a random number for spawning a ship part
+                    shipPartResult = Random.Range(0.0f, 1.0f);
+
+                    // If a ship part needs to be spawned, do so with the same direction as
+                    // the enemy that was destroyed and a slightly smaller speed
+                    if (shipPartResult < shipPartChance)
+                    {
+                        newShipPart = Instantiate(shipParts);
+
+                        // Get the ship part's ShipController Component
+                        ShipController shipControlComp = newShipPart.GetComponent<ShipController>();
+
+                        // Set the ship part's necessary movement data
+                        shipControlComp.VehiclePosition = collidableEnemies[j].
+                            GetComponent<ShipController>().VehiclePosition;
+                        shipControlComp.Direction = collidableEnemies[j].
+                            GetComponent<ShipController>().Direction.normalized;
+                        // Normalize the velocity of the enemy that was hit and scale
+                        // it to a slower speed for the ship part
+                        shipControlComp.Velocity = collidableEnemies[j].
+                            GetComponent<ShipController>().Velocity.normalized * 3;
+                        //shipControlComp.Camera = camera;
+
+                        // Add the current enemy to the List of active enemies
+                        player.GetComponent<Player>().ShipParts.Add(newShipPart);
+                    }
+
+
                     // Increment the player's score when they hit an enemy
                     player.GetComponent<Player>().Score += 100 * player.GetComponent<Player>().HullLevel;
 
@@ -125,8 +193,7 @@ public class CollisionManager : MonoBehaviour
                     {
                         // The payer has run out of lives and is at the lowest hull level
                         // so reset the game
-                        player.GetComponent<Player>().NumHits = 0;
-                        player.GetComponent<ShipController>().VehiclePosition = new Vector3(0, 0);
+                        playerDead = true;
                     }
 
                     // Remove the projectile that hit the player from the projectile List of the

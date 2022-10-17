@@ -116,6 +116,30 @@ public class ShipController : MonoBehaviour
         {
             return projectiles;
         }
+
+        set
+        {
+            projectiles = value;
+        }
+    }
+
+    /// <summary>
+    /// Property for getting and setting the
+    /// velocity of the vehicle (specifically
+    /// for slowing the speed of a ship part
+    /// when it is spawned)
+    /// </summary>
+    public Vector3 Velocity
+    {
+        get
+        {
+            return velocity;
+        }
+
+        set
+        {
+            velocity = value;
+        }
     }
 
     // Start is called before the first frame update

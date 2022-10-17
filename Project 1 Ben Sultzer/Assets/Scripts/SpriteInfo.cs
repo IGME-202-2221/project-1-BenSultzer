@@ -108,4 +108,11 @@ public class SpriteInfo : MonoBehaviour
         center = bounds.center;
         size = bounds.size;
     }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.white;
+
+        Gizmos.DrawWireSphere(center, maxX - center.x);
+    }
 }

@@ -9,7 +9,8 @@ using UnityEngine;
 // Restrictions: None
 public class CollisionDetection : MonoBehaviour
 {
-    // Fields
+    // Create a variable to store whether a collision
+    // has possibly occured
     bool possibleCollision;
 
     // Start is called before the first frame update

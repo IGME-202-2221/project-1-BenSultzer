@@ -24,6 +24,11 @@ public class EnemyManager : MonoBehaviour
     [SerializeField]
     GameObject camera;
 
+    // Create a public-facing variable to store the
+    // upgraded enemy sprite image file for an upgraded enemy
+    [SerializeField]
+    Sprite upgradedEnemySprite;
+
     // Create a List to store all currently active
     // enemies
     private List<GameObject> enemies;
@@ -55,6 +60,10 @@ public class EnemyManager : MonoBehaviour
     // an enemy  
     private float halfCamWidth;
 
+    // Create a variable to store the chance of an
+    // upgraded enemy spawning at a hull level of 2
+    private float upgradedEnemyChance;
+
     /// <summary>
     /// Property for getting the List of all active
     /// enemies
@@ -78,9 +87,7 @@ public class EnemyManager : MonoBehaviour
                                       new Vector2(-1, -1)};
         halfCamHeight = camera.GetComponent<Camera>().orthographicSize;
         halfCamWidth = halfCamHeight * camera.GetComponent<Camera>().aspect;
-
-        // Spawn intitial wave
-        SpawnLevel1Enemies();
+        upgradedEnemyChance = 0.75f;
     }
 
     // Update is called once per frame
@@ -90,7 +97,7 @@ public class EnemyManager : MonoBehaviour
         // whether enough time has passed, to determine if a new
         // wave of enemies should be spawned
         if (player.GetComponent<Player>().HullLevel == 1 &&
-            timeBeforeWaveSpawn > 60)
+            timeBeforeWaveSpawn > 10)
         {
             SpawnLevel1Enemies();
             timeBeforeWaveSpawn = 0f;
@@ -149,6 +156,54 @@ public class EnemyManager : MonoBehaviour
 
             // Get the current enemy's ShipController Component
             ShipController shipControlComp = newEnemy.GetComponent<ShipController>();
+
+            // Initialize that enemy's projectile list
+            shipControlComp.Projectiles = new List<GameObject>();
+
+            // Set the current enemy's necessary movement data
+            shipControlComp.VehiclePosition = new Vector3(
+                Random.Range(-halfCamWidth, halfCamWidth),
+                Random.Range(-halfCamHeight, halfCamHeight));
+            shipControlComp.Direction = movementDir[Random.Range(0, 8)];
+            newEnemy.transform.rotation = Quaternion.LookRotation(
+                Vector3.back, shipControlComp.Direction);
+            shipControlComp.Camera = camera;
+
+            // Add the current enemy to the List of active enemies
+            enemies.Add(newEnemy);
+        }
+    }
+
+    /// <summary>
+    /// Spawns the set of enemies to kill at a hull level of 2
+    /// </summary>
+    private void SpawnLevel2Enemies()
+    {
+        // Create a variable to store the probability result
+        // for spawning an upgraded enemy
+        float spawnUpgradedEnemy = Random.Range(0.0f, 1.0f);
+
+        for (int i = 0; i < 5; i++)
+        {
+            // Generate a random number to determine if an upgraded
+            // enemy should be spawned
+            spawnUpgradedEnemy = Random.Range(0.0f, 1.0f);
+
+            // Instantiate the Basic Enemy prefab
+            GameObject newEnemy = Instantiate(enemy);
+
+            // If an upgraded enemy should be spawned, change it's sprite
+            // to the upgraded enemy sprite
+            if (spawnUpgradedEnemy < upgradedEnemyChance)
+            {
+                newEnemy.GetComponent<SpriteRenderer>().sprite = upgradedEnemySprite;
+            }
+
+            // Get the current enemy's ShipController Component
+            ShipController shipControlComp = newEnemy.GetComponent<ShipController>();
+
+            // Initialize that enemy's projectile list
+            shipControlComp.Projectiles = new List<GameObject>();
 
             // Set the current enemy's necessary movement data
             shipControlComp.VehiclePosition = new Vector3(
