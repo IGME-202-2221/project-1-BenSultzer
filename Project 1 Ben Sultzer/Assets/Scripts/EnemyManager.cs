@@ -101,8 +101,12 @@ public class EnemyManager : MonoBehaviour
         {
             SpawnLevel1Enemies();
             timeBeforeWaveSpawn = 0f;
-        } else
+        } else if (player.GetComponent<Player>().HullLevel == 2 &&
+            timeBeforeWaveSpawn > 10)
         {
+            SpawnLevel2Enemies();
+            timeBeforeWaveSpawn = 0f;
+        } else {
             // Add the currently elapsed game time to the time tracker
             // before the next wave spawn
             timeBeforeWaveSpawn += Time.deltaTime;
@@ -133,7 +137,16 @@ public class EnemyManager : MonoBehaviour
         {
             if (timeBeforeFireNextProjectile > Random.Range(1f, 5f))
             {
-                enemies[i].GetComponent<ShipController>().EnemyFire();
+                // Determine whether or not the enemy is an upgraded enemy and
+                // call the correct fire method
+                if (enemies[i].GetComponent<SpriteRenderer>().sprite == upgradedEnemySprite)
+                {
+                    enemies[i].GetComponent<ShipController>().UpgradedEnemyFire();
+                }
+                else
+                {
+                    enemies[i].GetComponent<ShipController>().EnemyFire();
+                }
                 timeBeforeFireNextProjectile = 0f;
             } else
             {

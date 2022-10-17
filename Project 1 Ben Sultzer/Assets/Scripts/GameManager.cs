@@ -33,5 +33,14 @@ public class GameManager : MonoBehaviour
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
+
+        // If the player has reached the correct amount of points and 
+        // hull level 2, the win!
+        if (player.GetComponent<Player>().HullLevel == 2 && 
+            player.GetComponent<Player>().Score > 25000)
+        {
+            // Load the scene with the winning screen
+            SceneManager.LoadScene("WinScreen");
+        }
     }
 }

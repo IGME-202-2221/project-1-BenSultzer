@@ -26,6 +26,18 @@ public class CollisionManager : MonoBehaviour
     [SerializeField]
     GameObject shipParts;
 
+    // Create a public-facing variable to store 
+    // the upgraded player ship sprite for the
+    // player
+    [SerializeField]
+    Sprite upgradedPlayerSprite;
+
+    // Create a public-facing variable to store 
+    // the basic player ship sprite for the
+    // player
+    [SerializeField]
+    Sprite basicPlayerSprite;
+
     // Create a variable to track the time and 
     // flash the player's sprite invisible when they
     // are hit
@@ -50,6 +62,14 @@ public class CollisionManager : MonoBehaviour
     // of each enemy
     private List<List<GameObject>> collidableProjectilesEnemies;
 
+    // Create a variable to track the number of collected ship parts of
+    // the player
+    private int playerShipParts;
+
+    // Create a list to store the active ship parts on
+    // screen
+    private List<GameObject> activeShipParts;
+
     // Create a CollisionDetection variable to gain access to the
     // Bounding Circle collision calculation method.
     private CollisionDetection collisionDetection;
@@ -71,6 +91,18 @@ public class CollisionManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Property for getting the number of ship
+    /// parts collected by the player
+    /// </summary>
+    public int PlayerShipParts
+    {
+        get
+        {
+            return playerShipParts;
+        }
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -79,6 +111,8 @@ public class CollisionManager : MonoBehaviour
         flashTracker = 0.0f;
         playerDead = false;
         shipPartChance = 0.5f;
+        playerShipParts = 0;
+        activeShipParts = new List<GameObject>();
     }
 
     // Update is called once per frame
@@ -124,20 +158,18 @@ public class CollisionManager : MonoBehaviour
                         ShipController shipControlComp = newShipPart.GetComponent<ShipController>();
 
                         // Set the ship part's necessary movement data
-                        shipControlComp.VehiclePosition = collidableEnemies[j].
-                            GetComponent<ShipController>().VehiclePosition;
+                        shipControlComp.VehiclePosition = collidableEnemies[j].transform.position;
                         shipControlComp.Direction = collidableEnemies[j].
                             GetComponent<ShipController>().Direction.normalized;
                         // Normalize the velocity of the enemy that was hit and scale
                         // it to a slower speed for the ship part
                         shipControlComp.Velocity = collidableEnemies[j].
                             GetComponent<ShipController>().Velocity.normalized * 3;
-                        //shipControlComp.Camera = camera;
+                        shipControlComp.Camera = player.GetComponent<ShipController>().Camera;
 
-                        // Add the current enemy to the List of active enemies
-                        player.GetComponent<Player>().ShipParts.Add(newShipPart);
+                        // Add the new ship part to the List of active ship parts
+                        activeShipParts.Add(newShipPart);
                     }
-
 
                     // Increment the player's score when they hit an enemy
                     player.GetComponent<Player>().Score += 100 * player.GetComponent<Player>().HullLevel;
@@ -194,6 +226,15 @@ public class CollisionManager : MonoBehaviour
                         // The payer has run out of lives and is at the lowest hull level
                         // so reset the game
                         playerDead = true;
+                    // If the player's hull level is 2, demote them, set the player sprite to
+                    // the hull level 1 ship, and reset the number of ship parts they have
+                    // collected to 0
+                    } else if (player.GetComponent<Player>().NumHits == 3 &&
+                        player.GetComponent<Player>().HullLevel == 2)
+                    {
+                        player.GetComponent<Player>().HullLevel = 1;
+                        player.GetComponent<SpriteRenderer>().sprite = basicPlayerSprite;
+                        playerShipParts = 0;
                     }
 
                     // Remove the projectile that hit the player from the projectile List of the
@@ -204,6 +245,35 @@ public class CollisionManager : MonoBehaviour
                     break;
                 }
             }
+        }
+
+        // Test for collisions between the player and any active ship parts
+        for (int i = 0; i < activeShipParts.Count; i++)
+        {
+            if (collisionDetection.CircleCollision(player, activeShipParts[i]))
+            {
+                // Increment the number of ship parts collected by the player,
+                // then remove the ship part from the list of active ship parts and
+                // destroy it
+                playerShipParts++;
+
+                GameObject shipPartToDestroy = activeShipParts[i];
+                activeShipParts.RemoveAt(i);
+                Destroy(shipPartToDestroy);
+                break;
+            }
+        }
+
+        // Test to see if the player has collected enough ship parts to be 
+        // promoted to the next hull level
+        if (playerShipParts == 5)
+        {
+            // Upgrade the player's hull level, set the player's sprite to the
+            // upgraded ship, and set the number of ship parts collected by them
+            // to 0
+            player.GetComponent<Player>().HullLevel = 2;
+            player.GetComponent<SpriteRenderer>().sprite = upgradedPlayerSprite;
+            playerShipParts = 0;
         }
 
         // Update the flash tracker

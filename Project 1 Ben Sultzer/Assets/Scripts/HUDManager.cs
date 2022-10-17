@@ -20,6 +20,11 @@ public class HUDManager : MonoBehaviour
     [SerializeField]
     Text scoreLabel;
 
+    // Create a public-facing variable to store the
+    // "Ship Parts" label in the HUD
+    [SerializeField]
+    Text shipPartsLabel;
+
     // Create a public-facing variable to store
     // the first player life image in the HUD
     [SerializeField]
@@ -35,10 +40,19 @@ public class HUDManager : MonoBehaviour
     [SerializeField]
     Image lifeImageRight;
 
+    // Create a public-facing variable to store the 
+    // in-game collision manager (for gaining access to
+    // the number of ship parts collected by the
+    // player)
+    [SerializeField]
+    GameObject collisionManager;
+
     // Start is called before the first frame update
     void Start()
     {
         scoreLabel.text = "SCORE: 0";
+        shipPartsLabel.text = "Ship Parts: 0";
+
     }
 
     // Update is called once per frame
@@ -47,6 +61,12 @@ public class HUDManager : MonoBehaviour
         // Update the "SCORE" text in the HUD to
         // reflect the player's current score
         scoreLabel.text = "SCORE: " + player.GetComponent<Player>().Score;
+
+        // Update the "Ship Parts" text in the HUD to
+        // reflect the player's current number of collected
+        // ship parts
+        shipPartsLabel.text = "Ship Parts: " + 
+            collisionManager.GetComponent<CollisionManager>().PlayerShipParts;
 
         // Create a new Color that is a white
         // overlay with an Alpha of 0

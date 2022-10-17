@@ -286,4 +286,34 @@ public class ShipController : MonoBehaviour
         // active projectiles
         projectiles.Add(newProjectile);
     }
+
+    /// <summary>
+    /// Create a separate firing method for upgraded enemies that does not
+    /// rely on player input
+    /// </summary>
+    public void UpgradedEnemyFire()
+    {
+        // Instantiate two Projectile prefabs
+        GameObject newProjectile1 = Instantiate(projectile);
+        GameObject newProjectile2 = Instantiate(projectile);
+
+        // Get both fired projectiles' Projectile Component
+        Projectile projectileComp1 = newProjectile1.GetComponent<Projectile>();
+        Projectile projectileComp2 = newProjectile2.GetComponent<Projectile>();
+
+        // Set the necessary movement data for both of the fired projectiles
+        newProjectile1.transform.position = transform.position;
+        projectileComp1.ProjectilePosition = transform.position;
+        projectileComp1.Direction = transform.up;
+        projectileComp1.Camera = camera;
+        newProjectile2.transform.position = transform.position;
+        projectileComp2.ProjectilePosition = transform.position;
+        projectileComp2.Direction = transform.up;
+        projectileComp2.Camera = camera;
+
+        // Add both fired projectiles to the List of
+        // active projectiles
+        projectiles.Add(newProjectile1);
+        projectiles.Add(newProjectile2);
+    }
 }
